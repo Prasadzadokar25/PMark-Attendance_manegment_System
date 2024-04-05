@@ -1,0 +1,15 @@
+#insert
+
+insert_query = """
+                INSERT INTO users (username, password) 
+                VALUES (%s, %s)
+                """
+                data = (name, password)
+
+                cursor.execute(insert_query, data)
+                conn.commit()
+                print("Data inserted successfully")
+        except mysql.connector.Error as err:
+            print("Error:", err)
+            # Rollback transaction in case of error
+            conn.rollback()

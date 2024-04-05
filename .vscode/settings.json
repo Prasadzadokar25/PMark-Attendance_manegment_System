@@ -1,0 +1,30 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "Prasad25.mysql.pythonanywhere-services.com",
+            "port": 3306,
+            "driver": "MySQL",
+            "username": "Prasad25",
+            "database": "Prasad25$bigbite",
+            "name": "prasad25connection"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "Prasad25.mysql.pythonanywhere-services.com",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "prasad",
+            "database": "Prasad25$bigbite",
+            "username": "Prasad25"
+        }
+    ]
+}

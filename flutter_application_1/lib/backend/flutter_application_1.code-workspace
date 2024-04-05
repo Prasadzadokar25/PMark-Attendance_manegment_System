@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"name": "flutter_application_1",
+			"path": "../.."
+		}
+	],
+	"settings": {
+		"sqltools.connections": [
+			{
+				"mysqlOptions": {
+					"authProtocol": "default",
+					"enableSsl": "Disabled"
+				},
+				"previewLimit": 50,
+				"server": "sql6.freemysqlhosting.net",
+				"port": 3306,
+				"driver": "MySQL",
+				"database": "sql6686235",
+				"username": "sql6686235",
+				"name": "prasad"
+			}
+		]
+	}
+}
