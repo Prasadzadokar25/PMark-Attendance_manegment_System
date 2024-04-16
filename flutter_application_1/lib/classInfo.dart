@@ -8,21 +8,6 @@ import 'package:http/http.dart' as http;
 import 'Information.dart';
 import 'addStudent.dart';
 
-class ModelCard {
-  String className;
-  String strength;
-  String date;
-  String image;
-  String subject;
-
-  ModelCard(
-      {required this.className,
-      required this.strength,
-      required this.date,
-      required this.subject,
-      this.image = "assets/images/Group 43.png"});
-}
-
 class ClassInfo extends StatefulWidget {
   const ClassInfo({super.key});
 
@@ -62,8 +47,6 @@ class ClassInfoState extends State {
         print(' class added  successful');
         classCreated = true;
         Navigator.pop(context);
-
-        // Navigate to next screen or perform necessary actions
       } else {
         print('already presnt: ${response.reasonPhrase}');
         classNameError = 2;
@@ -80,7 +63,7 @@ class ClassInfoState extends State {
     const Color.fromARGB(255, 250, 249, 232),
     const Color.fromARGB(255, 250, 232, 250)
   ];
-  List cardList = Information.getDataObject().classes;
+  List classList = Information.getDataObject().classes;
 
   bool isCallTofetchsClass = true;
   @override
@@ -88,6 +71,7 @@ class ClassInfoState extends State {
     if (isCallTofetchsClass) {
       Information.getDataObject()
           .fetchClasses(Information.getDataObject().getTeacherId());
+      print(classList);
       isCallTofetchsClass = false;
     }
     return Scaffold(
@@ -116,10 +100,10 @@ class ClassInfoState extends State {
             size: 40,
             weight: 2,
           )),
-      body: (cardList.isNotEmpty)
+      body: (classList.isNotEmpty)
           ? ListView.builder(
               shrinkWrap: true,
-              itemCount: cardList.length,
+              itemCount: classList.length,
               itemBuilder: ((context, index) {
                 return getCard(context, index);
               }),
@@ -195,7 +179,7 @@ class ClassInfoState extends State {
                       SizedBox(
                         width: 230,
                         child: Text(
-                          cardList[index]['class_name'],
+                          classList[index]['class_name'],
                           style: GoogleFonts.quicksand(
                               fontSize: 16, fontWeight: FontWeight.w600),
                         ),
@@ -214,7 +198,7 @@ class ClassInfoState extends State {
                       SizedBox(
                         width: 230,
                         child: Text(
-                          "Subject : ${cardList[index]['subject_name']}",
+                          "Subject : ${classList[index]['subject_name']}",
                           style: GoogleFonts.quicksand(
                               fontSize: 14, fontWeight: FontWeight.w500),
                         ),
@@ -226,7 +210,7 @@ class ClassInfoState extends State {
               Row(
                 children: [
                   Text(
-                    "Created on\n${cardList[index]['date_of_creation']}",
+                    "Created on\n${classList[index]['date_of_creation']}",
                     style: GoogleFonts.quicksand(
                         color: const Color.fromARGB(224, 116, 114, 114),
                         fontSize: 11,
@@ -243,9 +227,9 @@ class ClassInfoState extends State {
                             return FadeTransition(
                               opacity: animation,
                               child: AddNewStudent(
-                                className: cardList[index]['class_name'],
-                                subjectName: cardList[index]['subject_name'],
-                                classid: cardList[index]['class_id'],
+                                className: classList[index]['class_name'],
+                                subjectName: classList[index]['subject_name'],
+                                classid: classList[index]['class_id'],
                               ),
                             );
                           },
@@ -292,9 +276,9 @@ class ClassInfoState extends State {
 
   void getBottomSheet(int index) {
     if (index != -1) {
-      titleController.text = cardList[index].className;
-      subjectController.text = cardList[index].subject;
-      strengthController.text = cardList[index].strength;
+      titleController.text = classList[index].className;
+      subjectController.text = classList[index].subject;
+      strengthController.text = classList[index].strength;
     } else {
       titleController.clear();
       subjectController.clear();
@@ -458,9 +442,12 @@ class ClassInfoState extends State {
                     backgroundColor: const Color.fromARGB(255, 170, 111, 254),
                     fixedSize: const Size(300, 50),
                   ),
-                  onPressed: () {
-                    addTask(index);
+                  onPressed: () async {
+                    await addClass(index);
                     isCallTofetchsClass = true;
+                    await Information.getDataObject().fetchClasses(
+                        Information.getDataObject().getTeacherId());
+                    classList = Information.getDataObject().classes;
                   },
                   child: Text(
                     "Submit",
@@ -481,7 +468,7 @@ class ClassInfoState extends State {
     );
   }
 
-  void addTask(index) {
+  addClass(index) async {
     String className = titleController.text.trim();
     String subject = subjectController.text.trim();
     String strength = strengthController.text.trim();
@@ -489,20 +476,20 @@ class ClassInfoState extends State {
 
     if (className.isNotEmpty && strength.isNotEmpty && subject.isNotEmpty) {
       if (index == -1) {
-        cardList.add({
+        classList.add({
           'class_name': className,
           'subject_name': subject,
           'date_of_creation': date,
           'teacher_id': Information.getDataObject().getTeacherId(),
         });
-        createClass(className: className, subjcetName: subject);
+        await createClass(className: className, subjcetName: subject);
         Information.getDataObject()
             .fetchClasses(Information.getDataObject().getTeacherId());
         setState(() {});
       } else {
-        cardList[index].className = className;
-        cardList[index].strength = strength;
-        cardList[index].date = date;
+        classList[index].className = className;
+        classList[index].strength = strength;
+        classList[index].date = date;
       }
 
       titleController.clear();

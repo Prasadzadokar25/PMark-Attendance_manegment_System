@@ -112,15 +112,11 @@ class _LoginState extends State {
           username: usernameController.text, password: passwordController.text);
 
       // ignore: use_build_context_synchronously
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 400),
-          pageBuilder: (context, animation, _) {
-            return FadeTransition(
-              opacity: animation,
-              child: const HomePage(),
-            );
+        MaterialPageRoute(
+          builder: (context) {
+            return const HomePage();
           },
         ),
       );

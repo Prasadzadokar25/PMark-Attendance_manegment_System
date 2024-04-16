@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'Information.dart';
 
 class AddNewStudent extends StatefulWidget {
   final String className;
@@ -42,43 +41,10 @@ class _AddNewStudentState extends State {
     const Color.fromARGB(255, 250, 249, 232),
     const Color.fromARGB(255, 250, 232, 250)
   ];
-  List classes = [
-    [
-      {
-        'name': 'prasad Zadokar',
-        'rollNo': '3310578579',
-        'image': "assets/images/Group 43.png"
-      },
-      {
-        'name': 'prasad zadokar',
-        'rollNo': '3310578579',
-        'image': "assets/images/Group 43.png"
-      },
-      {
-        'name': 'prasad Zadokar',
-        'rollNo': '3310578579',
-        'image': "assets/images/Group 43.png"
-      },
-      {
-        'name': 'prasad zadokar',
-        'rollNo': '3310578579',
-        'image': "assets/images/Group 43.png"
-      },
-      {
-        'name': 'prasad Zadokar',
-        'rollNo': '3310578579',
-        'image': "assets/images/Group 43.png"
-      },
-      {
-        'name': 'prasad zadokar',
-        'rollNo': '3310578579',
-        'image': "assets/images/Group 43.png"
-      },
-    ],
-  ];
+
   List<dynamic> Students = [];
 
-  Future<void> fetchsStudents(String classId) async {
+  Future<List> fetchsStudents(String classId) async {
     final Map<String, dynamic> requestData = {'class_id': classId};
     print("here to call students list");
     final response = await http.post(
@@ -88,16 +54,28 @@ class _AddNewStudentState extends State {
       },
       body: jsonEncode(requestData),
     );
-    print("++++++++++++ students +++++++++++");
+    print(response.statusCode);
     if (response.statusCode == 200) {
-      print("in if===============");
       Students = jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to load classes');
-    }
-    print('student ID: ${Students[0]['id']}');
-    print('student name: ${Students[0]['student_name']}');
+    } /*else {
+      throw Exception('Failed to load classes***************');
+    }*/
+
+    sort(Students);
     setState(() {});
+    return Students;
+  }
+
+  sort(List list) {
+    for (int i = 0; i < list.length; i++) {
+      for (int j = 0; j < list.length - 1; j++) {
+        if (int.parse(list[j]["roll_no"]) > int.parse(list[j + 1]["roll_no"])) {
+          Map temp = list[j];
+          list[j] = list[j + 1];
+          list[j + 1] = temp;
+        }
+      }
+    }
   }
 
   bool isCallTofetchsStudents = true;
@@ -209,94 +187,100 @@ class _AddNewStudentState extends State {
   }
 
   Widget getStudentCard(context, index) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          margin:
-              const EdgeInsets.only(top: 13, left: 13, right: 13, bottom: 6),
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-          alignment: Alignment.center,
-          width: double.infinity,
-          decoration: BoxDecoration(
-              color: colors[index % colors.length],
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
-                  spreadRadius: 0,
-                  blurRadius: 8,
-                  offset: const Offset(5, 8),
-                ),
-              ]),
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 52,
-                          width: 52,
-                          decoration: BoxDecoration(boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.3),
-                              spreadRadius: 1.2,
-                              blurRadius: 14,
-                            ),
-                          ], shape: BoxShape.circle, color: Colors.white),
-                          //child: Image.asset(classes[0][index]['image']),
-                        ),
-                      ]),
-                  const SizedBox(
-                    width: 13,
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.symmetric(horizontal: BorderSide(color: Colors.black12)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            margin:
+                const EdgeInsets.only(top: 13, left: 13, right: 13, bottom: 6),
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            alignment: Alignment.center,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              //color: colors[index % colors.length],
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              /* boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 0,
+                    blurRadius: 8,
+                    offset: const Offset(5, 8),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 230,
-                        child: Text(
-                          Students[index]['student_name'],
-                          style: GoogleFonts.quicksand(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      SizedBox(
-                        width: 230,
-                        child: Text(
-                          "Roll No: : ${Students[index]['roll_no']}",
-                          style: GoogleFonts.quicksand(
-                              fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              /*Row(
-                children: [
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      //getBottomSheet(index);
-                    },
-                    child: const Icon(
-                      Icons.edit,
-                      color: Color.fromARGB(255, 143, 82, 255),
+                ],*/
+            ),
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 52,
+                            width: 52,
+                            decoration: BoxDecoration(boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 1.2,
+                                blurRadius: 14,
+                              ),
+                            ], shape: BoxShape.circle, color: Colors.white),
+                            //child: Image.asset(classes[0][index]['image']),
+                          ),
+                        ]),
+                    const SizedBox(
+                      width: 13,
                     ),
-                  )
-                ],
-              )*/
-            ],
-          ),
-        )
-      ],
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 230,
+                          child: Text(
+                            Students[index]['student_name'],
+                            style: GoogleFonts.quicksand(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 3,
+                        ),
+                        SizedBox(
+                          width: 230,
+                          child: Text(
+                            "Roll No: : ${Students[index]['roll_no']}",
+                            style: GoogleFonts.quicksand(
+                                fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                /*Row(
+                  children: [
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        //getBottomSheet(index);
+                      },
+                      child: const Icon(
+                        Icons.edit,
+                        color: Color.fromARGB(255, 143, 82, 255),
+                      ),
+                    )
+                  ],
+                )*/
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -382,6 +366,11 @@ class _AddNewStudentState extends State {
                             if (studentRollNoController.text.isEmpty) {
                               return "Please enter valid roll number";
                             } else {
+                              try {
+                                int.parse(studentRollNoController.text);
+                              } catch (e) {
+                                return "Please enter valid roll number";
+                              }
                               return null;
                             }
                           },
@@ -500,6 +489,31 @@ class _AddNewStudentState extends State {
                       if (addStudentKey.currentState!.validate()) {
                         addStudentInDatabase();
                         isCallTofetchsStudents = true;
+                        Future<List> fetchsStudents(String classId) async {
+                          final Map<String, dynamic> requestData = {
+                            'class_id': classId
+                          };
+                          print("here to call students list");
+                          final response = await http.post(
+                            Uri.parse(
+                                'http://prasad25.pythonanywhere.com/getStudents'),
+                            headers: <String, String>{
+                              'Content-Type': 'application/json',
+                            },
+                            body: jsonEncode(requestData),
+                          );
+                          print(response.statusCode);
+                          if (response.statusCode == 200) {
+                            Students = jsonDecode(response.body);
+                          } /*else {
+      throw Exception('Failed to load classes***************');
+    }*/
+
+                          sort(Students);
+                          setState(() {});
+                          return Students;
+                        }
+
                         setState(() {});
                       }
                     },
@@ -542,8 +556,9 @@ class _AddNewStudentState extends State {
       if (response.statusCode == 200) {
         Navigator.pop(context);
         print('added  successful');
-
-        // Navigate to next screen or perform necessary actions
+        studentNameController.clear();
+        studentRollNoController.clear();
+        studentContactController.clear();
       } else {
         print('student already presnt: ${response.reasonPhrase}');
       }

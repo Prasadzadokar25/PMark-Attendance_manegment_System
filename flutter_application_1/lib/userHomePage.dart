@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Information.dart';
 import 'package:flutter_application_1/classInfo.dart';
+import 'package:flutter_application_1/class_analytic.dart';
 import 'package:intl/intl.dart';
 
 import 'profilePage.dart';
-import 'takeAttendance.dart';
+import 'take_attendance.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -397,7 +398,11 @@ class _HomeState extends State {
                         ),
                         child: ElevatedButton(
                             onPressed: () {
-                              print(Information().getUsername());
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          const ClassAnalytic()));
                             },
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.all(10),
@@ -433,7 +438,7 @@ class _HomeState extends State {
                                     height: 7,
                                   ),
                                   const Text(
-                                    "Attendance\nAnalytic",
+                                    "Class\nAnalytic",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 15,
