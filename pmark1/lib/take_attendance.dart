@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -273,7 +274,7 @@ class _TakeAttendanceState extends State {
 
   Future<List> fetchsstudent(String classId) async {
     final Map<String, dynamic> requestData = {'class_id': classId};
-    print("here to call student list");
+    log("here to call student list");
     final response = await http.post(
       Uri.parse('http://prasad25.pythonanywhere.com/getStudents'),
       headers: <String, String>{
@@ -295,11 +296,11 @@ class _TakeAttendanceState extends State {
 }
 
 class StartAttendace extends StatefulWidget {
-  String className;
-  String subjcetName;
-  List student;
-  List status = [-1];
-  String date;
+  final String className;
+  final String subjcetName;
+  final List student;
+  final List status = [-1];
+  final String date;
   StartAttendace(
       {required this.className,
       required this.subjcetName,
