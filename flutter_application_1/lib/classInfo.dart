@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -44,16 +45,17 @@ class ClassInfoState extends State {
       final response = await http.post(Uri.parse(url),
           headers: headers, body: jsonEncode(body));
       if (response.statusCode == 200) {
-        print(' class added  successful');
+        log(' class added  successful');
         classCreated = true;
+        // ignore: use_build_context_synchronously
         Navigator.pop(context);
       } else {
-        print('already presnt: ${response.reasonPhrase}');
+        log('already presnt: ${response.reasonPhrase}');
         classNameError = 2;
       }
       setState(() {});
     } catch (error) {
-      print('Error: $error');
+      log('Error: $error');
     }
   }
 
@@ -76,7 +78,6 @@ class ClassInfoState extends State {
     }
     return Scaffold(
       appBar: AppBar(
-          automaticallyImplyLeading: false,
           centerTitle: true,
           title: Text(
             "My Class's",

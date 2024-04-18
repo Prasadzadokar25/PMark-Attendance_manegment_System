@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pmark/Information.dart';
 import 'setting.dart';
 import 'userHomePage.dart';
 
@@ -106,9 +107,9 @@ class _EditProfilePageState extends State {
               Container(
                 alignment: Alignment.center,
                 margin: const EdgeInsets.all(15),
-                child: const Text(
-                  "Prasad25",
-                  style: TextStyle(
+                child: Text(
+                  Information.getDataObject().username,
+                  style: const TextStyle(
                     letterSpacing: 1.2,
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
@@ -127,36 +128,6 @@ class _EditProfilePageState extends State {
               const SizedBox(
                 height: 35,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text("CANCEL",
-                        style: TextStyle(
-                            fontSize: 14,
-                            letterSpacing: 2.2,
-                            color: Colors.black)),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 166, 130, 250),
-                      padding: const EdgeInsets.symmetric(horizontal: 50),
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                    ),
-                    child: const Text(
-                      "SAVE",
-                      style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 2.2,
-                          color: Colors.white),
-                    ),
-                  )
-                ],
-              )
             ],
           ),
         ),

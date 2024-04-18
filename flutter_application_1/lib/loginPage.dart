@@ -1,8 +1,9 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Information.dart';
+import 'package:pmark/Information.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'userHomePage.dart';
@@ -73,8 +74,8 @@ class _LoginState extends State {
           return true;
           // Navigate to next screen or perform necessary actions
         } else {
-          print("here");
-          print('Login failed: ${response.reasonPhrase}');
+          log("here");
+          log('Login failed: ${response.reasonPhrase}');
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             animation: kAlwaysCompleteAnimation,
             shape: RoundedRectangleBorder(
@@ -100,7 +101,7 @@ class _LoginState extends State {
           return false;
         }
       } catch (error) {
-        print('Error: $error');
+        log('Error: $error');
       }
     }
     return false;
@@ -282,11 +283,14 @@ class _LoginState extends State {
                   ]),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 144, 120, 255),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    onPressed: login,
+                      backgroundColor: const Color.fromARGB(255, 144, 120, 255),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      login();
+                    },
                     child: const Text(
                       "Login",
                       style: TextStyle(

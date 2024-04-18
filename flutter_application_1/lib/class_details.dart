@@ -1,14 +1,17 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:pmark/Information.dart';
 import 'package:pie_chart/pie_chart.dart';
 
 class ClassDetails extends StatefulWidget {
-  const ClassDetails({super.key});
+  final ModelClassData classObj;
+  const ClassDetails({super.key, required this.classObj});
   @override
   State createState() => _ClassDetailsState();
 }
 
-class _ClassDetailsState extends State {
+class _ClassDetailsState extends State<ClassDetails> {
   int selectedDrawerButtonIndex = 2;
   Map<String, double> data = {
     "Absent": 20,
@@ -19,15 +22,16 @@ class _ClassDetailsState extends State {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Class Anyalatics",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+        title: Text(
+          "${widget.classObj.class_name} [${widget.classObj.subject_name}]",
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PieChart(
                 dataMap: data,
@@ -57,11 +61,12 @@ class _ClassDetailsState extends State {
             const SizedBox(
               height: 25,
             ),
-            const Row(
+            Row(
               children: [
                 Text(
-                  "Total Lecturs : 17",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  "Total Lecturs : ${widget.classObj.lectureCount}",
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -74,6 +79,7 @@ class _ClassDetailsState extends State {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 1),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
@@ -148,7 +154,15 @@ class _ClassDetailsState extends State {
               ),
             ),
             const SizedBox(
-              height: 30,
+              height: 25,
+            ),
+            const Text(
+              "Students",
+              textAlign: TextAlign.start,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(
+              height: 10,
             ),
             Expanded(
               child: Container(
@@ -160,10 +174,42 @@ class _ClassDetailsState extends State {
                   ),
                 ),
                 //height: MediaQuery.of(context).size.height * 0.4,
-                child: ListView.builder(
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    return graphCard(index);
+                child: FutureBuilder(
+                  future: fetchsStudents(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      if (studentList.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "No student found",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              SizedBox(
+                                height: 100,
+                                width: 100,
+                                child:
+                                    Image.asset("assets/images/noStudent.png"),
+                              )
+                            ],
+                          ),
+                        );
+                      } else {
+                        return ListView.builder(
+                          itemCount: studentList.length,
+                          itemBuilder: (context, index) {
+                            return studentCard(studentList[index]);
+                          },
+                        );
+                      }
+                    }
                   },
                 ),
               ),
@@ -174,7 +220,7 @@ class _ClassDetailsState extends State {
     );
   }
 
-  Widget graphCard(int index) {
+  Widget studentCard(Map studentData) {
     return Container(
       padding: const EdgeInsets.all(15),
       child: Row(
@@ -194,60 +240,55 @@ class _ClassDetailsState extends State {
               color: Colors.black12,
             ),
             child: Text(
-              "${index + 1}",
-              style: TextStyle(fontWeight: FontWeight.w500),
+              "${studentData["roll_no"]}",
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),
           const SizedBox(
             width: 10,
           ),
-          const Text(
-            "Student Name eg prasad",
-            style: TextStyle(fontSize: 16),
+          Text(
+            "${studentData["student_name"]}",
+            style: const TextStyle(fontSize: 16),
           ),
         ],
       ),
     );
   }
 
-  Widget getDrawerButtons({
-    required IconData icon,
-    required String label,
-    required int buttonIndex,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: (buttonIndex == selectedDrawerButtonIndex)
-            ? const Color.fromRGBO(14, 161, 125, 0.15)
-            : null,
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(20),
-          bottomRight: Radius.circular(20),
-        ),
-      ),
-      height: 45,
-      width: 186,
-      alignment: Alignment.center,
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: const Color.fromRGBO(5, 158, 117, 1),
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.02,
-          ),
-          Text(
-            label,
-            style: TextStyle(
-              color: (buttonIndex == selectedDrawerButtonIndex)
-                  ? const Color.fromRGBO(5, 158, 117, 1)
-                  : null,
-            ),
-          )
-        ],
-      ),
+  List<dynamic> studentList = [];
+
+  Future<List> fetchsStudents() async {
+    Map<String, dynamic> requestData = {
+      'class_id': "${widget.classObj.class_id}"
+    };
+
+    Uri uri = Uri.parse("http://prasad25.pythonanywhere.com/getStudents");
+    final response = await http.post(
+      uri,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(requestData),
     );
+
+    if (response.statusCode == 200) {
+      studentList = jsonDecode(response.body);
+      sort(studentList);
+    }
+
+    return studentList;
+  }
+
+  sort(List list) {
+    for (int i = 0; i < list.length; i++) {
+      for (int j = 0; j < list.length - 1; j++) {
+        if (int.parse(list[j]["roll_no"]) > int.parse(list[j + 1]["roll_no"])) {
+          Map temp = list[j];
+          list[j] = list[j + 1];
+          list[j + 1] = temp;
+        }
+      }
+    }
   }
 }

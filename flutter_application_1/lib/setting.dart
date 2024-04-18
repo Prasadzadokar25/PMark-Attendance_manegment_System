@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -21,7 +22,7 @@ class _SettingsPageState extends State {
           },
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.green,
+            color: Color.fromARGB(255, 160, 113, 246),
           ),
         ),
       ),
@@ -40,7 +41,7 @@ class _SettingsPageState extends State {
               children: [
                 Icon(
                   Icons.person,
-                  color: Colors.green,
+                  color: const Color.fromARGB(255, 160, 113, 246),
                 ),
                 SizedBox(
                   width: 8,
@@ -70,7 +71,7 @@ class _SettingsPageState extends State {
               children: [
                 Icon(
                   Icons.volume_up_outlined,
-                  color: Colors.green,
+                  color: const Color.fromARGB(255, 160, 113, 246),
                 ),
                 SizedBox(
                   width: 8,
@@ -99,7 +100,14 @@ class _SettingsPageState extends State {
                 //padding: EdgeInsets.symmetric(horizontal: 40),
                 /*  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),*/
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/login', // Replace '/login' with the route name of your login screen
+                    (route) =>
+                        false, // Remove all routes from the stack except for the login screen
+                  );
+                },
                 child: const Text("SIGN OUT",
                     style: TextStyle(
                         fontSize: 16, letterSpacing: 2.2, color: Colors.black)),
@@ -139,13 +147,25 @@ class _SettingsPageState extends State {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text(title),
+                title: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                ),
                 content: const Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("Option 1"),
-                    Text("Option 2"),
-                    Text("Option 3"),
+                    Text(
+                      "Comming soon !",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                      "Developer[prasad zadokar] prevaring for PTC Interview 😅",
+                      style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    )
                   ],
                 ),
                 actions: [

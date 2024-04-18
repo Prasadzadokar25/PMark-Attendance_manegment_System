@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Information.dart';
-import 'package:flutter_application_1/classInfo.dart';
-import 'package:flutter_application_1/class_analytic.dart';
+import 'package:pmark/Information.dart';
+import 'package:pmark/classInfo.dart';
+import 'package:pmark/class_analytic.dart';
 import 'package:intl/intl.dart';
 
 import 'profilePage.dart';
@@ -143,7 +143,12 @@ class _HomeState extends State {
             ),
             ListTile(
               title: const Text('My classes'),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.push(context, MaterialPageRoute(builder: (contex) {
+                  return const ClassInfo();
+                }));
+              },
             ),
             ListTile(
               title: const Text("Time table"),
@@ -167,12 +172,6 @@ class _HomeState extends State {
             ),
             const SizedBox(
               height: 60,
-            ),
-            ListTile(
-              title: const Text('SignOut'),
-              onTap: () {
-                // Handle item 2 tap
-              },
             ),
           ],
         ),

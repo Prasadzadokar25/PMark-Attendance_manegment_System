@@ -188,7 +188,7 @@ class _AddNewStudentState extends State {
 
   Widget getStudentCard(context, index) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border.symmetric(horizontal: BorderSide(color: Colors.black12)),
       ),
       child: Column(
@@ -502,7 +502,6 @@ class _AddNewStudentState extends State {
                             },
                             body: jsonEncode(requestData),
                           );
-                          print(response.statusCode);
                           if (response.statusCode == 200) {
                             Students = jsonDecode(response.body);
                           } /*else {

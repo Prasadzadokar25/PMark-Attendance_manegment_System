@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Information.dart';
-import 'package:flutter_application_1/class_details.dart';
+import 'package:pmark/Information.dart';
+import 'package:pmark/class_details.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ClassAnalytic extends StatefulWidget {
@@ -11,7 +11,7 @@ class ClassAnalytic extends StatefulWidget {
 }
 
 class _ClassAnalyticState extends State<ClassAnalytic> {
-  List classes = Information.getDataObject().classes;
+  List classes = Information.getDataObject().classesObjList;
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +20,10 @@ class _ClassAnalyticState extends State<ClassAnalytic> {
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 166, 119, 254),
         title: Text(
-          "Attendance",
+          "Classe's ",
           style: GoogleFonts.quicksand(
-              fontWeight: FontWeight.w700,
-              fontSize: 23,
+              fontWeight: FontWeight.w600,
+              fontSize: 22,
               color: const Color.fromARGB(255, 255, 255, 255)),
         ),
       ),
@@ -43,8 +43,10 @@ class _ClassAnalyticState extends State<ClassAnalytic> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              const ClassDetails()),
+                        builder: (BuildContext context) => ClassDetails(
+                          classObj: classes[index],
+                        ),
+                      ),
                     );
                   },
                   child: Container(
@@ -79,7 +81,7 @@ class _ClassAnalyticState extends State<ClassAnalytic> {
                           height: 10,
                         ),
                         Text(
-                          classes[index]["class_name"],
+                          classes[index].class_name,
                           style: const TextStyle(
                             color: Color.fromRGBO(33, 33, 33, 1),
                             fontWeight: FontWeight.w500,
@@ -87,7 +89,7 @@ class _ClassAnalyticState extends State<ClassAnalytic> {
                           ),
                         ),
                         Text(
-                          classes[index]["subject_name"],
+                          classes[index].subject_name,
                           style: const TextStyle(
                             color: Color.fromRGBO(33, 33, 33, 1),
                             fontWeight: FontWeight.w400,

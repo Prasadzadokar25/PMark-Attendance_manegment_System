@@ -275,7 +275,7 @@ class _TakeAttendanceState extends State {
     final Map<String, dynamic> requestData = {'class_id': classId};
     print("here to call student list");
     final response = await http.post(
-      Uri.parse('http://prasad25.pythonanywhere.com/getstudent'),
+      Uri.parse('http://prasad25.pythonanywhere.com/getStudents'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -298,6 +298,7 @@ class StartAttendace extends StatefulWidget {
   String className;
   String subjcetName;
   List student;
+  List status = [-1];
   String date;
   StartAttendace(
       {required this.className,
@@ -318,8 +319,6 @@ class _StartAttendaceState extends State<StartAttendace> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.student);
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -370,17 +369,17 @@ class _StartAttendaceState extends State<StartAttendace> {
                     alignment: Alignment.center,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 250, 232, 232),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            spreadRadius: 0,
-                            blurRadius: 8,
-                            offset: const Offset(5, 8),
-                          ),
-                        ]),
+                      color: const Color.fromARGB(255, 250, 232, 232),
+                      borderRadius: const BorderRadius.all(Radius.circular(12)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 0,
+                          blurRadius: 8,
+                          offset: const Offset(5, 8),
+                        ),
+                      ],
+                    ),
                     child: Column(
                       children: [
                         Row(
@@ -450,6 +449,7 @@ class _StartAttendaceState extends State<StartAttendace> {
                         onPressed: () {
                           attendeceProcces();
                           presentCount++;
+                          widget.status.add(1);
                           setState(() {});
                         },
                         style: ElevatedButton.styleFrom(
@@ -469,6 +469,7 @@ class _StartAttendaceState extends State<StartAttendace> {
                         onPressed: () {
                           attendeceProcces();
                           absentCount++;
+                          widget.status.add(1);
                           setState(() {});
                         },
                         style: ElevatedButton.styleFrom(
@@ -576,17 +577,18 @@ class _StartAttendaceState extends State<StartAttendace> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    Navigator.pushReplacement(
+                    Navigator.of(context).pop();
+                    /*Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) {
                         return TakeAttendance();
                       }),
-                    );
+                    );*/
                   },
-                  child: const Text("Conform"),
                   style: ElevatedButton.styleFrom(
                       backgroundColor:
                           const Color.fromARGB(255, 137, 230, 140)),
+                  child: const Text("Conform"),
                 )
               ],
             ),
