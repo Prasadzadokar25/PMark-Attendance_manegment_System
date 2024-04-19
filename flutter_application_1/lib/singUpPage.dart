@@ -208,6 +208,7 @@ class _NewAccountState extends State {
                             },
                             //maxLength: 40,
                             controller: contactNoController,
+                            keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               labelText: "Phone No.",
                               labelStyle: const TextStyle(
