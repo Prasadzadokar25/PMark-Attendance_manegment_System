@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
 import 'Information.dart';
-import 'addStudent.dart';
+import 'add_student.dart';
 
 class ClassInfo extends StatefulWidget {
   const ClassInfo({super.key});
@@ -67,62 +67,81 @@ class ClassInfoState extends State {
   ];
   List classList = Information.getDataObject().classes;
 
+  Future<bool> getClasses() async {
+    await Information.getDataObject()
+        .fetchClasses(Information.getDataObject().getTeacherId());
+    classList = Information.getDataObject().classes;
+    print(classList);
+
+    return classList.isEmpty;
+  }
+
   bool isCallTofetchsClass = true;
   @override
   Widget build(BuildContext context) {
-    if (isCallTofetchsClass) {
-      Information.getDataObject()
-          .fetchClasses(Information.getDataObject().getTeacherId());
-      print(classList);
-      isCallTofetchsClass = false;
-    }
     return Scaffold(
-      appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            "My Class's",
-            style: GoogleFonts.quicksand(
-                fontWeight: FontWeight.w700,
-                fontSize: 23,
-                color: const Color.fromARGB(255, 255, 255, 255)),
-          ),
-          backgroundColor: const Color.fromARGB(255, 166, 119, 254)),
-      floatingActionButton: FloatingActionButton(
-          tooltip: "Add new Class",
-          onPressed: () {
-            classNameError = -1;
-            getBottomSheet(-1);
-          },
-          backgroundColor: const Color.fromARGB(255, 166, 119, 254),
-          shape: const CircleBorder(),
-          child: const Icon(
-            Icons.add,
-            color: Colors.white,
-            size: 40,
-            weight: 2,
-          )),
-      body: (classList.isNotEmpty)
-          ? ListView.builder(
-              shrinkWrap: true,
-              itemCount: classList.length,
-              itemBuilder: ((context, index) {
-                return getCard(context, index);
-              }),
-            )
-          : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "assets/images/noClassFound2.png",
-                    width: 150,
-                    height: 150,
-                  ),
-                  const Text("   No class found"),
-                ],
-              ),
+        appBar: AppBar(
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            title: Text(
+              "My Class's",
+              style: GoogleFonts.quicksand(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 23,
+                  color: const Color.fromARGB(255, 255, 255, 255)),
             ),
-    );
+            backgroundColor: const Color.fromARGB(255, 166, 119, 254)),
+        floatingActionButton: FloatingActionButton(
+            tooltip: "Add new Class",
+            onPressed: () {
+              classNameError = -1;
+              getBottomSheet(-1);
+            },
+            backgroundColor: const Color.fromARGB(255, 166, 119, 254),
+            shape: const CircleBorder(),
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 40,
+              weight: 2,
+            )),
+        body: FutureBuilder(
+            future: getClasses(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                if (classList.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "No class found",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          height: 150,
+                          width: 150,
+                          child: Image.asset("assets/images/noClassFound2.png"),
+                        )
+                      ],
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: classList.length,
+                    itemBuilder: ((context, index) {
+                      return getCard(context, index);
+                    }),
+                  );
+                }
+              }
+            }));
   }
 
   Widget getCard(BuildContext context, int index) {

@@ -9,7 +9,7 @@ class SearchBarDemo extends StatefulWidget {
 }
 
 class _MyHomePageState extends State {
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   bool _isSearchVisible = false;
 
   @override
@@ -34,7 +34,7 @@ class _MyHomePageState extends State {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Scrolling Search Bar'),
+        title: const Text('Scrolling Search Bar'),
       ),
       body: ListView.builder(
         controller: _scrollController,
@@ -47,13 +47,13 @@ class _MyHomePageState extends State {
       ),
       floatingActionButton: AnimatedOpacity(
         opacity: _isSearchVisible ? 1.0 : 0.0,
-        duration: Duration(milliseconds: 400),
+        duration: const Duration(milliseconds: 400),
         child: FloatingActionButton(
           onPressed: () {
             // Your action when the search button is pressed
           },
           tooltip: 'Search',
-          child: Icon(Icons.search),
+          child: const Icon(Icons.search),
         ),
       ),
     );

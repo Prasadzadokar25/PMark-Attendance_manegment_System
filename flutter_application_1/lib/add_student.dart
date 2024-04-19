@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,28 +8,19 @@ import 'package:http/http.dart' as http;
 class AddNewStudent extends StatefulWidget {
   final String className;
   final String subjectName;
-  int classid;
-  AddNewStudent(
-      {required this.className,
-      required this.subjectName,
-      required this.classid,
-      super.key});
+  final int classid;
+  const AddNewStudent({
+    required this.className,
+    required this.subjectName,
+    required this.classid,
+    super.key,
+  });
 
   @override
-  State createState() => _AddNewStudentState(
-      className: className, classid: classid, subjectName: subjectName);
+  State createState() => _AddNewstudenttate();
 }
 
-class _AddNewStudentState extends State {
-  String className;
-  String subjectName;
-  int classid;
-
-  _AddNewStudentState(
-      {required this.className,
-      required this.classid,
-      required this.subjectName});
-
+class _AddNewstudenttate extends State<AddNewStudent> {
   TextEditingController studentNameController = TextEditingController();
   TextEditingController studentRollNoController = TextEditingController();
   TextEditingController studentContactController = TextEditingController();
@@ -42,28 +34,28 @@ class _AddNewStudentState extends State {
     const Color.fromARGB(255, 250, 232, 250)
   ];
 
-  List<dynamic> Students = [];
+  List<dynamic> student = [];
 
-  Future<List> fetchsStudents(String classId) async {
+  Future<List> fetchsstudent(String classId) async {
     final Map<String, dynamic> requestData = {'class_id': classId};
-    print("here to call students list");
+    log("here to call student list");
     final response = await http.post(
-      Uri.parse('http://prasad25.pythonanywhere.com/getStudents'),
+      Uri.parse('http://prasad25.pythonanywhere.com/getstudent'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
       body: jsonEncode(requestData),
     );
-    print(response.statusCode);
+    log("{response.statusCode}");
     if (response.statusCode == 200) {
-      Students = jsonDecode(response.body);
+      student = jsonDecode(response.body);
     } /*else {
       throw Exception('Failed to load classes***************');
     }*/
 
-    sort(Students);
+    sort(student);
     setState(() {});
-    return Students;
+    return student;
   }
 
   sort(List list) {
@@ -78,18 +70,18 @@ class _AddNewStudentState extends State {
     }
   }
 
-  bool isCallTofetchsStudents = true;
+  bool isCallTofetchsstudent = true;
   @override
   Widget build(BuildContext context) {
-    if (isCallTofetchsStudents) {
-      fetchsStudents("$classid");
-      isCallTofetchsStudents = false;
+    if (isCallTofetchsstudent) {
+      fetchsstudent("${widget.classid}");
+      isCallTofetchsstudent = false;
     }
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "Add Students",
+          "Add student",
           style: GoogleFonts.quicksand(
             fontWeight: FontWeight.w700,
             fontSize: 23,
@@ -112,7 +104,7 @@ class _AddNewStudentState extends State {
             width: double.infinity,
             //   color: const Color.fromARGB(255, 232, 220, 255),
             child: Text(
-              " Class : $className",
+              " Class : ${widget.className}",
               style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w400),
             ),
           ),
@@ -127,19 +119,19 @@ class _AddNewStudentState extends State {
             width: double.infinity,
             //   color: const Color.fromARGB(255, 232, 220, 255),
             child: Text(
-              " Subject : $subjectName",
+              " Subject : ${widget.subjectName}",
               style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w400),
             ),
           ),
           const SizedBox(
             height: 15,
           ),
-          (Students.isNotEmpty)
+          (student.isNotEmpty)
               ? Expanded(
                   child: SizedBox(
                       child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: Students.length,
+                    itemCount: student.length,
                     itemBuilder: ((context, index) {
                       return getStudentCard(context, index);
                     }),
@@ -242,7 +234,7 @@ class _AddNewStudentState extends State {
                         SizedBox(
                           width: 230,
                           child: Text(
-                            Students[index]['student_name'],
+                            student[index]['student_name'],
                             style: GoogleFonts.quicksand(
                                 fontSize: 16, fontWeight: FontWeight.w600),
                           ),
@@ -253,7 +245,7 @@ class _AddNewStudentState extends State {
                         SizedBox(
                           width: 230,
                           child: Text(
-                            "Roll No: : ${Students[index]['roll_no']}",
+                            "Roll No: : ${student[index]['roll_no']}",
                             style: GoogleFonts.quicksand(
                                 fontSize: 14, fontWeight: FontWeight.w500),
                           ),
@@ -441,6 +433,7 @@ class _AddNewStudentState extends State {
                           decoration: InputDecoration(
                             hintText: "eg. 8956652382",
                             hintStyle: const TextStyle(
+                              fontSize: 16,
                               color: Color.fromRGBO(0, 0, 0, 0.156),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
@@ -488,29 +481,29 @@ class _AddNewStudentState extends State {
                     onPressed: () {
                       if (addStudentKey.currentState!.validate()) {
                         addStudentInDatabase();
-                        isCallTofetchsStudents = true;
-                        Future<List> fetchsStudents(String classId) async {
+                        isCallTofetchsstudent = true;
+                        Future<List> fetchsstudent(String classId) async {
                           final Map<String, dynamic> requestData = {
                             'class_id': classId
                           };
-                          print("here to call students list");
+                          print("here to call student list");
                           final response = await http.post(
                             Uri.parse(
-                                'http://prasad25.pythonanywhere.com/getStudents'),
+                                'http://prasad25.pythonanywhere.com/getstudent'),
                             headers: <String, String>{
                               'Content-Type': 'application/json',
                             },
                             body: jsonEncode(requestData),
                           );
                           if (response.statusCode == 200) {
-                            Students = jsonDecode(response.body);
+                            student = jsonDecode(response.body);
                           } /*else {
       throw Exception('Failed to load classes***************');
     }*/
 
-                          sort(Students);
+                          sort(student);
                           setState(() {});
-                          return Students;
+                          return student;
                         }
 
                         setState(() {});
@@ -547,14 +540,15 @@ class _AddNewStudentState extends State {
       'studentName': studentName,
       'studentRollNo': studentRollNo,
       'studentContact': studentContact,
-      'classId': "$classid",
+      'classId': "${widget.classid}",
     };
     try {
       final response = await http.post(Uri.parse(url),
           headers: headers, body: jsonEncode(body));
       if (response.statusCode == 200) {
+        // ignore: use_build_context_synchronously
         Navigator.pop(context);
-        print('added  successful');
+        log('added  successful');
         studentNameController.clear();
         studentRollNoController.clear();
         studentContactController.clear();

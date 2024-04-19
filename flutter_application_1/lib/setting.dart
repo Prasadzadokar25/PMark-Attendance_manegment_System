@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:pmark/database_connection.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -41,7 +41,7 @@ class _SettingsPageState extends State {
               children: [
                 Icon(
                   Icons.person,
-                  color: const Color.fromARGB(255, 160, 113, 246),
+                  color: Color.fromARGB(255, 160, 113, 246),
                 ),
                 SizedBox(
                   width: 8,
@@ -71,7 +71,7 @@ class _SettingsPageState extends State {
               children: [
                 Icon(
                   Icons.volume_up_outlined,
-                  color: const Color.fromARGB(255, 160, 113, 246),
+                  color: Color.fromARGB(255, 160, 113, 246),
                 ),
                 SizedBox(
                   width: 8,
@@ -101,11 +101,60 @@ class _SettingsPageState extends State {
                 /*  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),*/
                 onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/login', // Replace '/login' with the route name of your login screen
-                    (route) =>
-                        false, // Remove all routes from the stack except for the login screen
+                  showDialog(
+                    // barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        //clipBehavior: Clip.antiAliasWithSaveLayer,
+
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(
+                              height: 25,
+                            ),
+                            const Text(
+                              "Do you want to Sign out?",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 255, 167, 159)),
+                                  onPressed: () {
+                                    UserInfo.getObject().removeCurrentUser();
+                                    Navigator.pushNamedAndRemoveUntil(
+                                      context,
+
+                                      '/login', // Replace '/login' with the route name of your login screen
+                                      (route) =>
+                                          false, // Remove all routes from the stack except for the login screen
+                                    );
+                                  },
+                                  child: const Text("Sign out"),
+                                ),
+                                const SizedBox(
+                                  width: 25,
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text("Cancel"),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   );
                 },
                 child: const Text("SIGN OUT",

@@ -225,6 +225,7 @@ class _TakeAttendanceState extends State {
                       (dateController.text.isNotEmpty)
                           ? {
                               Navigator.push(
+                                // ignore: use_build_context_synchronously
                                 context,
                                 PageRouteBuilder(
                                   transitionDuration:
@@ -282,16 +283,27 @@ class _TakeAttendanceState extends State {
       },
       body: jsonEncode(requestData),
     );
-    print(response.statusCode);
     if (response.statusCode == 200) {
       student = jsonDecode(response.body);
     } else {
-      throw Exception('Failed to load classes***************');
+      log("this class has no student in server database");
     }
 
+    sort(student);
     setState(() {});
-    print(student);
     return student;
+  }
+
+  sort(List list) {
+    for (int i = 0; i < list.length; i++) {
+      for (int j = 0; j < list.length - 1; j++) {
+        if (int.parse(list[j]["roll_no"]) > int.parse(list[j + 1]["roll_no"])) {
+          Map temp = list[j];
+          list[j] = list[j + 1];
+          list[j + 1] = temp;
+        }
+      }
+    }
   }
 }
 

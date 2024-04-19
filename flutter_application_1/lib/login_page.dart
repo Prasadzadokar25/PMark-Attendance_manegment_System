@@ -1,42 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:pmark/Information.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'database_connection.dart';
 import 'userHomePage.dart';
 import 'singUpPage.dart';
-
-class IpAddress {
-  String _ipAddress = 'Unknown';
-
-  Future<String> _getIpAddress() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile) {
-      // Get the IP address of the mobile network
-      var ipAddress = await _getMobileIpAddress();
-
-      _ipAddress = ipAddress ?? 'Unknown';
-      return _ipAddress;
-    } else {
-      _ipAddress = 'Not connected to a mobile network';
-      return "emulator";
-    }
-  }
-
-  Future<String?> _getMobileIpAddress() async {
-    for (var interface in await NetworkInterface.list()) {
-      for (var addr in interface.addresses) {
-        if (addr.address.isNotEmpty && !addr.address.startsWith('127.')) {
-          return addr.address;
-        }
-      }
-    }
-    return null;
-  }
-}
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -63,12 +36,17 @@ class _LoginState extends State {
       };
 
       try {
-        print("here here");
+        log("here here");
         final response = await http.post(Uri.parse(url),
             headers: headers, body: jsonEncode(body));
 
         if (response.statusCode == 200) {
-          print('Login successful');
+          await UserInfo.getObject().insertCurrentUser(
+              usernameController.text, passwordController.text);
+          Information.getDataObject().setInfo(
+              username: usernameController.text,
+              password: passwordController.text);
+          log('Login successful');
 
           setState(() {});
           return true;
@@ -112,7 +90,7 @@ class _LoginState extends State {
       Information.getDataObject().setInfo(
           username: usernameController.text, password: passwordController.text);
 
-      // ignore: use_build_context_synchronously
+      // ignore: duplicate_ignore
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -185,11 +163,11 @@ class _LoginState extends State {
                                       color: Color.fromARGB(255, 95, 78, 244),
                                       width: 1.5)),
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderRadius: BorderRadius.circular(8.0),
                                   borderSide:
                                       const BorderSide(color: Colors.black12)),
                               errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderRadius: BorderRadius.circular(8.0),
                                   borderSide:
                                       BorderSide(color: Colors.red.shade800)),
                               prefixIcon: const Icon(
@@ -224,16 +202,16 @@ class _LoginState extends State {
                               contentPadding: const EdgeInsets.symmetric(
                                   vertical: 13.0, horizontal: 10.0),
                               focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(8),
                                   borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 95, 78, 244),
                                       width: 1.5)),
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderRadius: BorderRadius.circular(8.0),
                                   borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 80, 78, 78))),
                               errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderRadius: BorderRadius.circular(8.0),
                                   borderSide:
                                       BorderSide(color: Colors.red.shade800)),
                               prefixIcon: const Icon(Icons.key),
@@ -285,7 +263,7 @@ class _LoginState extends State {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 144, 120, 255),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     onPressed: () {
@@ -294,7 +272,7 @@ class _LoginState extends State {
                     child: const Text(
                       "Login",
                       style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 19,
                           color: Color.fromARGB(255, 255, 255, 255)),
                     ),
                   )),
@@ -366,5 +344,34 @@ class _LoginState extends State {
         },
       ),
     );
+  }
+}
+
+class IpAddress {
+  String _ipAddress = 'Unknown';
+
+  Future<String> _getIpAddress() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile) {
+      // Get the IP address of the mobile network
+      var ipAddress = await _getMobileIpAddress();
+
+      _ipAddress = ipAddress ?? 'Unknown';
+      return _ipAddress;
+    } else {
+      _ipAddress = 'Not connected to a mobile network';
+      return "emulator";
+    }
+  }
+
+  Future<String?> _getMobileIpAddress() async {
+    for (var interface in await NetworkInterface.list()) {
+      for (var addr in interface.addresses) {
+        if (addr.address.isNotEmpty && !addr.address.startsWith('127.')) {
+          return addr.address;
+        }
+      }
+    }
+    return null;
   }
 }

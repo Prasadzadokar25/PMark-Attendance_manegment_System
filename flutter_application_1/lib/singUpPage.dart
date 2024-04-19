@@ -1,7 +1,7 @@
 import "dart:convert";
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
-import "loginPage.dart";
+import "login_page.dart";
 
 class NewAccount extends StatefulWidget {
   const NewAccount({super.key});
@@ -24,6 +24,8 @@ class _NewAccountState extends State {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController contactNoController = TextEditingController();
+
+  bool isSubmitPressed = false;
 
   Future<void> singUp() async {
     username = usernameController.text;
@@ -117,6 +119,8 @@ class _NewAccountState extends State {
                               username = usernameController.text;
                               userNamehaveoneletter = true;
                               print(username);
+                              usernameError = 0;
+
                               setState(() {});
                             },
                             controller: usernameController,
@@ -126,18 +130,18 @@ class _NewAccountState extends State {
                               labelStyle: const TextStyle(
                                   fontSize: 17,
                                   color: Color.fromRGBO(0, 0, 0, 0.5)),
-                              errorText:
-                                  (username.isEmpty && userNamehaveoneletter)
-                                      ? "Please enter valid user name"
-                                      : (usernameError == 2)
-                                          ? "Username already exits"
-                                          : null,
+                              errorText: (usernameController.text.isEmpty &&
+                                      isSubmitPressed)
+                                  ? "username should not empty"
+                                  : (usernameError == 2)
+                                      ? "username already exits"
+                                      : null,
                               focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(10),
                                   borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 22, 20, 20))),
                               errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderRadius: BorderRadius.circular(10.0),
                                   borderSide:
                                       BorderSide(color: Colors.red.shade800)),
                               contentPadding: const EdgeInsets.only(left: 25),
@@ -145,7 +149,7 @@ class _NewAccountState extends State {
                               fillColor:
                                   const Color.fromARGB(255, 236, 236, 236),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
+                                borderRadius: BorderRadius.circular(10.0),
                                 borderSide:
                                     const BorderSide(color: Colors.black),
                               ),
@@ -160,6 +164,9 @@ class _NewAccountState extends State {
                             //maxLength: 40,
                             //maxLength: 40,
 
+                            onChanged: (value) {
+                              setState(() {});
+                            },
                             controller: passwordController,
                             decoration: InputDecoration(
                               labelText: "Password",
@@ -168,19 +175,20 @@ class _NewAccountState extends State {
                                   fontSize: 17,
                                   color: Color.fromRGBO(0, 0, 0, 0.5)),
                               //hintText: "Password",
-                              errorText: (passwordError == 1)
+                              errorText: (passwordController.text.length < 4 &&
+                                      isSubmitPressed)
                                   ? "password should have atlest 4 letters"
                                   : null,
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderRadius: BorderRadius.circular(10.0),
                                   borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 0, 0, 0))),
                               focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(10),
                                   borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 24, 10, 9))),
                               errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderRadius: BorderRadius.circular(10.0),
                                   borderSide:
                                       BorderSide(color: Colors.red.shade800)),
                               contentPadding: const EdgeInsets.only(left: 25),
@@ -195,21 +203,29 @@ class _NewAccountState extends State {
                       SizedBox(
                           width: 300,
                           child: TextFormField(
+                            onChanged: (value) {
+                              setState(() {});
+                            },
                             //maxLength: 40,
                             controller: contactNoController,
                             decoration: InputDecoration(
                               labelText: "Phone No.",
                               labelStyle: const TextStyle(
                                   color: Color.fromRGBO(0, 0, 0, 0.5)),
-                              errorText: (contactNoError == 1)
-                                  ? "please enter valid mobile number"
+                              errorText: ((contactNoController.text.length !=
+                                              10 &&
+                                          isSubmitPressed) ||
+                                      (!isnumberContainIntegerOnly(
+                                              contactNoController.text) &&
+                                          contactNoController.text.isNotEmpty))
+                                  ? "please enter void mobile number"
                                   : null,
                               focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(10),
                                   borderSide:
                                       const BorderSide(color: Colors.black)),
                               errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderRadius: BorderRadius.circular(10.0),
                                   borderSide:
                                       BorderSide(color: Colors.red.shade800)),
                               contentPadding: const EdgeInsets.only(left: 25),
@@ -217,7 +233,7 @@ class _NewAccountState extends State {
                               fillColor:
                                   const Color.fromARGB(255, 241, 241, 241),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
+                                borderRadius: BorderRadius.circular(10.0),
                                 borderSide:
                                     const BorderSide(color: Colors.black),
                               ),
@@ -247,6 +263,7 @@ class _NewAccountState extends State {
                                     borderRadius: BorderRadius.circular(10))),
                             onPressed: () {
                               print(cheachuserNamehaveoneletterIsFilled());
+                              isSubmitPressed = true;
                               userNamehaveoneletter = true;
                               passwordhaveoneletter = true;
                               setState(() {});
@@ -257,7 +274,7 @@ class _NewAccountState extends State {
                             child: const Text(
                               "Submit",
                               style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 19,
                                   color: Color.fromARGB(255, 255, 255, 255)),
                             ),
                           )),
@@ -324,11 +341,9 @@ class _NewAccountState extends State {
                 const SizedBox(
                   height: 25,
                 ),
-                Container(
-                  child: const Text(
-                    "Your account has been \n   succesfully created",
-                    style: TextStyle(fontSize: 20),
-                  ),
+                const Text(
+                  "Your account has been \n   succesfully created",
+                  style: TextStyle(fontSize: 20),
                 ),
                 const SizedBox(
                   height: 25,
@@ -396,6 +411,15 @@ class _NewAccountState extends State {
               ],
             )),
           );
+  }
+
+  bool isnumberContainIntegerOnly(String contact) {
+    try {
+      int.parse(contact);
+    } catch (e) {
+      return false;
+    }
+    return true;
   }
 
   bool cheachuserNamehaveoneletterIsFilled() {

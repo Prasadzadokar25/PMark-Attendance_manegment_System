@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
@@ -6,8 +7,6 @@ class Information {
   String username = "prasadzadokars";
   String password = "";
   int teacherid = 0;
-
-  Information() {}
 
   static Information obj = Information();
 
@@ -71,15 +70,15 @@ class Information {
       },
       body: jsonEncode(requestData),
     );
-    print("+++++++++++++++++++++++");
     if (response.statusCode == 200) {
-      print("in if===============");
+      log("in if===============");
       classes = jsonDecode(response.body);
     } else {
-      throw Exception('Failed to load classes');
+      Information.getDataObject().classes = [];
+
+      log('this user has no class no server.......');
     }
-    print('Class ID: ${classes[0]['class_id'].runtimeType}');
-    print('Class ID: ${classes[0]['class_name'].runtimeType}');
+
     classesObjList = classes.map((map) => ModelClassData.getobj(map)).toList();
   }
 }
