@@ -26,6 +26,7 @@ class _AddNewstudenttate extends State<AddNewStudent> {
   TextEditingController studentContactController = TextEditingController();
 
   GlobalKey<FormState> addStudentKey = GlobalKey<FormState>();
+  bool studentAlreadyPesent = false;
 
   List colors = [
     const Color.fromARGB(255, 250, 232, 232),
@@ -36,17 +37,17 @@ class _AddNewstudenttate extends State<AddNewStudent> {
 
   List<dynamic> student = [];
 
-  Future<List> fetchsstudent(String classId) async {
+  Future<bool> fetchsstudent(String classId) async {
     final Map<String, dynamic> requestData = {'class_id': classId};
     log("here to call student list");
     final response = await http.post(
-      Uri.parse('http://prasad25.pythonanywhere.com/getstudent'),
+      Uri.parse('http://prasad25.pythonanywhere.com/getStudents'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
       body: jsonEncode(requestData),
     );
-    log("{response.statusCode}");
+    print(response.statusCode);
     if (response.statusCode == 200) {
       student = jsonDecode(response.body);
     } /*else {
@@ -55,7 +56,8 @@ class _AddNewstudenttate extends State<AddNewStudent> {
 
     sort(student);
     setState(() {});
-    return student;
+
+    return true;
   }
 
   sort(List list) {
@@ -126,31 +128,35 @@ class _AddNewstudenttate extends State<AddNewStudent> {
           const SizedBox(
             height: 15,
           ),
-          (student.isNotEmpty)
-              ? Expanded(
-                  child: SizedBox(
-                      child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: student.length,
-                    itemBuilder: ((context, index) {
-                      return getStudentCard(context, index);
-                    }),
-                  )),
-                )
-              : Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/images/noClassFound2.png",
-                          width: 150,
+          FutureBuilder(
+              future: fetchsstudent("${widget.classid}"),
+              builder: (context, snapshot) {
+                return (student.isNotEmpty)
+                    ? Expanded(
+                        child: SizedBox(
+                            child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: student.length,
+                          itemBuilder: ((context, index) {
+                            return getStudentCard(context, index);
+                          }),
+                        )),
+                      )
+                    : Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/noClassFound2.png",
+                                width: 150,
+                              ),
+                              const Text(" No Student found"),
+                            ],
+                          ),
                         ),
-                        const Text(" No Student found"),
-                      ],
-                    ),
-                  ),
-                ),
+                      );
+              }),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromARGB(255, 166, 119, 254),
@@ -323,7 +329,8 @@ class _AddNewstudenttate extends State<AddNewStudent> {
                           decoration: const InputDecoration(
                             hintText: "eg. prasad zadokar",
                             hintStyle: TextStyle(
-                                color: Color.fromRGBO(0, 0, 0, 0.156)),
+                              color: Color.fromRGBO(0, 0, 0, 0.156),
+                            ),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 15.0, horizontal: 10.0),
                             focusedBorder: OutlineInputBorder(
@@ -366,12 +373,19 @@ class _AddNewstudenttate extends State<AddNewStudent> {
                               return null;
                             }
                           },
+                          onChanged: (value) {
+                            studentAlreadyPesent = false;
+                            setState(() {});
+                          },
                           controller: studentRollNoController,
                           decoration: InputDecoration(
                             hintText: "eg. 79",
                             hintStyle: const TextStyle(
                               color: Color.fromRGBO(0, 0, 0, 0.156),
                             ),
+                            errorText: (studentAlreadyPesent == true)
+                                ? "Roll number already present"
+                                : null,
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 15.0, horizontal: 10.0),
                             labelStyle: GoogleFonts.quicksand(
@@ -479,6 +493,7 @@ class _AddNewstudenttate extends State<AddNewStudent> {
                       fixedSize: const Size(300, 50),
                     ),
                     onPressed: () {
+                      studentAlreadyPesent = false;
                       if (addStudentKey.currentState!.validate()) {
                         addStudentInDatabase();
                         isCallTofetchsstudent = true;
@@ -553,7 +568,11 @@ class _AddNewstudenttate extends State<AddNewStudent> {
         studentRollNoController.clear();
         studentContactController.clear();
       } else {
+        studentAlreadyPesent = true;
+        Navigator.of(context).pop();
+        setState(() {});
         print('student already presnt: ${response.reasonPhrase}');
+        getBottomSheet(1);
       }
       setState(() {});
     } catch (error) {

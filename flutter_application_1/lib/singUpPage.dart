@@ -367,7 +367,7 @@ class _NewAccountState extends State {
                   child: const SizedBox(
                     width: 300,
                     child: Text(
-                      "   Welcome to BIG BITE!  Explore nearby menus, connect with foodies, and personalize your dining experience. Let's discover delicious options together!",
+                      "   Welcome to PMARK!  Lets name your work easy and maintanable!",
                       style: TextStyle(fontSize: 16),
                     ),
                   ),

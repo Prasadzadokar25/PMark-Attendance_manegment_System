@@ -1,0 +1,123 @@
+from flask import Flask, request, jsonify
+from database import Connection
+
+connection = Connection()
+app = Flask(_name_)
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    ipadress = data.get('ipAdress')
+    print(ipadress)
+   # if username == 'ppp' and password == '1512':
+
+    if(connection.checkLoginInfo(username,password)):
+        connection.addIpInDataBase(username,ipadress)
+        return jsonify({'message': 'Login successful'})
+
+    else:
+        return jsonify({'message': 'Invalid credentials'}), 401
+
+@app.route('/singUp',methods = ['post'])
+def singUp():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    contact = data.get('contact')
+
+    if(connection.isEntryPresent(username)):
+        return jsonify({'message': 'already present'}), 401
+
+    else:
+        connection.insertInToDataBase(username,password,contact)
+        return jsonify({'message': 'added succefuly'})
+
+
+
+
+@app.route('/createClassroom', methods=['POST'])
+def createClassroom():
+    data = request.get_json()
+    className = data.get('className')
+    subjectName = data.get('subjectName')
+    strength = data.get('strength')
+    dateOfCreation = data.get('dateOfCreation')
+    teacherId = data.get('teacher_id')
+
+   # if username == 'ppp' and password == '1512':
+
+    if(not connection.isClassEntryPresentInData(className,subjectName)):
+        if(connection.addClassInDataBase(className,subjectName,strength,dateOfCreation,teacherId)):
+            return jsonify({'message': 'class added succefuly'})
+        else:
+            return jsonify({'message': 'Invalid credentials'}), 401
+
+    else:
+        return jsonify({'message': 'Invalid credentials'}), 401
+
+@app.route('/get_teacher_id',methods=['POST'])
+def get_teacher_id():
+
+    print("here")
+    data = request.get_json()
+    username = data.get('username')
+
+    #id sathi meyhod la connection chya gettecherid method la call karato
+    result = connection.getTeacherId(username)
+
+    print(result)
+    print(username)
+    if result:
+        return jsonify({"id": result[0]})
+    else:
+        return jsonify({"error": "Teacher not found"}), 404
+
+
+@app.route('/classes', methods=['post'])
+def classes():
+    data = request.get_json()
+    username = data.get('username')
+    classes_data = connection.get_classes_for_teacher(username)
+    print("here for classes")
+    if classes_data:
+        return jsonify(classes_data)
+
+@app.route('/addStudentIfNotExit', methods=['POST'])
+def addStudentIfNotExit():
+    data = request.get_json()
+    studentName = data.get('studentName')
+    studentRollNo = data.get('studentRollNo')
+    studentContact = data.get('studentContact')
+    classId = data.get('classId')
+
+
+    if(not connection.isStudentEntryPresentInData(studentRollNo,classId)):
+        if(connection.addStudentInDataBase(studentName,studentRollNo,studentContact,classId)):
+            return jsonify({'message': 'class added succefuly'})
+        else:
+            return jsonify({'message': 'Invalid credentials'}), 401
+
+    else:
+        return jsonify({'message': 'Invalid credentials'}), 401
+
+#----------------------------- 05/03/2024------------------------------------------------
+
+@app.route('/getStudents', methods=['post'])
+def getStudents():
+    print("here for students")
+    data = request.get_json()
+    class_id = data.get('class_id')
+    integer_class_id = int(class_id)
+
+    print(class_id)
+    student_data = connection.get_students_for_class(integer_class_id)
+    print("here for students")
+    print(student_data)
+
+    if(student_data):
+        return jsonify(student_data)
+
+'''if _name_ == '_main_':
+    app.run(host='0.0.0.0', port=5000, debug=True)'''

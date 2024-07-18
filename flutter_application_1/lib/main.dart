@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       routes: {"/login": (context) => const Login()},
       title: 'Flutter Demo',
       home: FutureBuilder(
-          future: isUserLoggedIn(),
+          future: temp(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -40,8 +40,8 @@ class MyApp extends StatelessWidget {
                 ),
               ));
             } else {
-              bool userLoggedIn = snapshot.data ?? false;
-              if (userLoggedIn) {
+              // bool userLoggedIn = snapshot.data ?? false;
+              if (false) {
                 return const HomePage();
               } else {
                 return const Login();
@@ -62,5 +62,9 @@ class MyApp extends StatelessWidget {
     }
 
     return currentUser.isNotEmpty;
+  }
+
+  Future<bool> temp() async {
+    return true;
   }
 }
